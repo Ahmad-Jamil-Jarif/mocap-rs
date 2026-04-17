@@ -136,8 +136,8 @@ Most modern browsers block camera access on non-localhost/non-HTTPS links.
 - When using the LAN relay (`https://<lan-ip>:8080/phone`), your browser might display a *"Your connection is not private"* certificate warning. This is expected due to self-signed TLS certificates generated locally.
 - **Fix:** Click **Advanced** and choose **Proceed to <lan-ip> (unsafe)** to allow WebSocket and camera connections.
 
-### WebSocket Connection Failed
+<!-- ### WebSocket Connection Failed
 - Check that your phone and computer are connected to the **same local Wi-Fi network**.
 - Ensure that your local firewall allows inbound connections on the configured port (default is `8080`).
 
----
+--- -->
