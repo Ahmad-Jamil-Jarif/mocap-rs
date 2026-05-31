@@ -107,8 +107,8 @@ You can easily use your own customized VRoid or VRM avatars:
 2. Register your avatar inside the `public/models/index.json` file:
    ```json
    {
-     "name": "My Character",
-     "file": "my-character.vrm",
+     "name": "Your Character",
+     "file": "Your-character.vrm",
      "cdn": "https://optional-cdn-url.com/my-character.vrm",
      "thumb": "thumbnail.png"
    }
