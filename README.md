@@ -1,6 +1,6 @@
 # mocap-rs
 
-Real-time, browser-based motion capture for **VRM avatars**. Your webcam drives a 3D avatar's face, hands, and full body — running entirely on-device, offline, and **without a discrete GPU**.
+Real-time, browser-based motion capture for **VRM avatars**. Your webcam drives a 3D avatar's face, hands, and full body, running entirely on-device, offline, and **without a discrete GPU**.
 
 > **Live Demo:** Open the deployed site, click **Start**, and allow camera access.
 
