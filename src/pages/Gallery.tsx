@@ -90,7 +90,7 @@ export function Gallery() {
       <main className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-12 pt-[clamp(2rem,7vh,4rem)] pb-16">
         <div className="mb-8">
           <h1 className="m-0 mb-2 text-[clamp(1.7rem,4.5vw,2.6rem)] font-extrabold tracking-[-0.03em]">Choose an avatar</h1>
-          <p className="m-0 text-muted text-[0.95rem]">Pick a built-in avatar or upload your own VRM — it loads instantly.</p>
+          <p className="m-0 text-muted text-[0.95rem]">Pick a built-in avatar or upload your own VRM</p>
         </div>
 
         <div className="grid grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] gap-[1.1rem]">
