@@ -10,6 +10,7 @@ import { useLandmarks } from "../hooks/useLandmarks";
 import { AvatarController } from "../lib/avatarController";
 import { Tracker, filterByMode, type DetectResult, type Quality } from "../lib/tracker";
 import { modelUrl } from "../lib/assets";
+import { getVrmBlob } from "../lib/vrmStore";
 import type { LandmarkFrame, TrackingMode } from "../lib/landmarks";
 
 const DEFAULT_MODEL = modelUrl({
@@ -34,9 +35,26 @@ export function Studio() {
 
   const [params] = useSearchParams();
   const selected = params.get("m");
-  // Avatar is chosen on the gallery and passed as a full URL (?m=…). It doesn't
-  // change in-session, so it's a plain const (no in-Studio switcher anymore).
-  const model = selected ? decodeURIComponent(selected) : DEFAULT_MODEL;
+  const raw = selected ? decodeURIComponent(selected) : DEFAULT_MODEL;
+  const UPLOAD_PREFIX = "upload:";
+  const [model, setModel] = useState(raw.startsWith(UPLOAD_PREFIX) ? DEFAULT_MODEL : raw);
+  const isUpload = raw.startsWith("blob:") || raw.startsWith(UPLOAD_PREFIX);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (raw.startsWith(UPLOAD_PREFIX)) {
+      const id = raw.slice(UPLOAD_PREFIX.length);
+      getVrmBlob(id).then((blob) => {
+        if (cancelled || !blob) return;
+        setModel(URL.createObjectURL(blob));
+      });
+    } else {
+      setModel(raw);
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [raw]);
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [statusMsg, setStatusMsg] = useState("");
@@ -188,12 +206,21 @@ export function Studio() {
   // Auto-start on entry — "Launch Studio" navigates here within the same SPA
   // document, so the click's user-activation still covers getUserMedia. If the
   // browser blocks it, the error state offers a Retry (a fresh gesture).
+  // For user-uploaded models we wait until the model is ready before requesting
+  // the camera so the two heavy operations never overlap the main thread.
+  const modelReadyRef = useRef(!isUpload);
+  useEffect(() => {
+    if (avatar.kind === "ready" && !modelReadyRef.current) {
+      modelReadyRef.current = true;
+    }
+  }, [avatar.kind]);
+
   const autoStarted = useRef(false);
   useEffect(() => {
-    if (autoStarted.current) return;
+    if (autoStarted.current || !modelReadyRef.current) return;
     autoStarted.current = true;
-    start();
-  }, [start]);
+    requestAnimationFrame(() => start());
+  }, [start, avatar.kind]);
 
   // ── Avatar drive + render FPS ─────────────────────────────────────────────
   const frames = useRef(0);

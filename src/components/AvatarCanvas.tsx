@@ -266,6 +266,10 @@ export function AvatarCanvas({
             kind: "loading",
             progress: total > 0 ? received / total : 0,
           });
+          // Yield to the event loop every chunk so the UI stays responsive.
+          // Without this, large blob-based uploads can block the main thread
+          // and trigger the browser's "Page Unresponsive" dialog.
+          await new Promise((r) => setTimeout(r, 0));
         }
         if (disposed) return;
         const buf = new Uint8Array(received);
@@ -277,6 +281,9 @@ export function AvatarCanvas({
         // resourcePath lets the parser resolve any external refs relative to the
         // model URL (VRMs are self-contained glb, so this is just a safe base).
         const base = modelUrl.slice(0, modelUrl.lastIndexOf("/") + 1);
+        // Yield before the heavy synchronous parsing so the browser can paint
+        // the loading-progress UI and react to input events.
+        await new Promise((r) => requestAnimationFrame(r));
         loader.parse(buf.buffer, base, onVrmLoaded as never, onVrmError);
       } catch (err) {
         onVrmError(err);
